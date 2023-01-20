@@ -1,0 +1,19 @@
+{
+  "name": "rss-toot",
+  "version": "1.0.0",
+  "description": "Mastodon bot that toots articles from Steam's RSS feed.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "wandaweb",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.2.2",
+    "cheerio": "^1.0.0-rc.12",
+    "fast-xml-parser": "^4.0.13",
+    "masto": "^5.4.0",
+    "sharp": "^0.31.3",
+    "uuid": "^9.0.0"
+  }
+}
