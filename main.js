@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { XMLParser, XMLBuilder, XMLValidator } = require('fast-xml-parser');
+const { XMLParser } = require('fast-xml-parser');
 const fs = require('fs');
 const LocalData = require('./localdata.js');
 const PostCreator = require('./postcreator.js');
@@ -14,12 +14,12 @@ const postCreator = new PostCreator(MAX_POST_LENGTH, MAX_DESCRIPTION_LENGTH);
 
 const gameBots = [];
 
-var M;
+var postPublisher;
 
-PostPublisher.mastodon().then((mastodon) => {
-    M = mastodon;
-    createPublishers();
-}).then(() => {
+createPublishers().then(() => {
+    postPublisher = getGameBot("SteamNews").bot;
+    console.log("Steam News publisher: ")
+    console.log(postPublisher);
     getFeed()
     setInterval(getFeed, 10 * 60 * 1000);
     setInterval(local.cleanUpPostList, 48 * 60 * 60 * 1000);
@@ -27,7 +27,6 @@ PostPublisher.mastodon().then((mastodon) => {
 
 async function getFeed() {
     try {
-        var postPublisher = new PostPublisher.PostPublisher(M);
         var response = await axios.get('https://store.steampowered.com/feeds/news/');
         if (response && response.data) {
             var XMLData = response.data;
@@ -57,7 +56,7 @@ async function getFeed() {
                     console.log(guid);
 
                     // create post
-                    var post = await postCreator.createPost(title, link, description);
+                    var post = await postCreator.createPostSteam(title, link, description);
 
                     // if the post has an image, download it
                     var posted = false;
@@ -92,8 +91,7 @@ async function getFeed() {
                 } else {
                     console.log("already posted");
                 }
-                delay(1000)
-
+                await delay(1000);
             }
         }
     } catch (err) {
@@ -102,29 +100,24 @@ async function getFeed() {
 }
 
 async function createPublishers() {
-    fs.readFile("accounts.json", async (err, data) => {
-        if (err) {
-            console.error("Error reading accounts.json. " + err);
-        } else {
-            var accounts = JSON.parse(data);
-            try {
-                for (var i = 0; i < accounts.length; i++) {
-                    var account = accounts[i];
-                    PostPublisher.createMastodonBot(account).then((gameLogin) => {
-                        var gameBot = new PostPublisher.PostPublisher(gameLogin);
-                        gameBots.push({ game: account.game, bot: gameBot });
-                    });
-
-                }
-            } catch (err) {
-                console.log("Error creating a specific mastodon bot. " + err);
-            }
+    var data = fs.readFileSync("accounts.json");
+    var accounts = JSON.parse(data);
+    console.log("accounts: " + accounts.length)
+    try {
+        for (var i = 0; i < accounts.length; i++) {
+            var account = accounts[i];
+            gameLogin = await PostPublisher.createMastodonBot(account);
+            var gameBot = new PostPublisher.PostPublisher(gameLogin);
+            gameBots.push({ game: account.game, bot: gameBot });
         }
-    })
+    } catch (err) {
+        console.log("Error creating a specific mastodon bot. " + err);
+    }
 }
 
 function getGameBot(game) {
     var returnElement = null;
+    console.log("Game bot count: " + gameBots.length);
     gameBots.forEach((element) => {
         if (element.game == game) returnElement = element;
     });

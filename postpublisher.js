@@ -2,31 +2,6 @@
 const fs = require('fs');
 const { login } = require('masto');
 
-const mastodon = async function () {
-    var masto;
-    try {
-        masto = await login(getKeys());
-    } catch (err) {
-        console.error("Error signing into Mastodon. " + err);
-    }
-    return masto;
-}
-
-function getKeys() {
-    var keys, config;
-    try {
-        keys = fs.readFileSync('keys.json');
-        config = JSON.parse(keys);
-        return {
-            url: config.api_url,
-            accessToken: config.access_token
-        };
-    } catch (err) {
-        console.log("Error reading keys file: " + err);
-    }
-    return null;
-}
-
 const createMastodonBot = async function(account) {
     var masto;
     try {
@@ -89,4 +64,4 @@ class PostPublisher {
     }
 }
 
-module.exports = { PostPublisher, mastodon, createMastodonBot };
+module.exports = { PostPublisher, createMastodonBot };

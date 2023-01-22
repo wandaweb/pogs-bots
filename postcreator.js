@@ -24,9 +24,9 @@ class PostCreator {
     *                        and the local path to the image downloaded from @description if 
     *                        @description contains a valid <img> element
     */
-    createPost = async (title, link, description) => {
+    createPostSteam = async (title, link, description) => {
         var postText = "";
-        var game;
+        var game, imagePath;
 
         // add the game name 
         if (link.includes("/app/")) {
@@ -42,6 +42,47 @@ class PostCreator {
         // add a hashtag
         postText += "#SteamNews";
 
+        postText += this.createPostText(link, description);
+        imagePath = this.findPostImage(description);
+
+        return { postText: postText, imagePath: imagePath, game: game };
+    }
+
+    createPostText = (link, description) => {
+        var postText = "";
+        description = this.extractText(description);
+
+        var previous = description[0];
+        var splitIndex = 0;
+        for (var i = 1; i<description.length && i<this.maxDescriptionLength; i++) {
+            var character = description[i];
+            if (character == ' ' || character == '\n' || character == '\r') {
+                if (previous == '.' || previous == '?' || previous == '!') {
+                        splitIndex = i;
+                }
+            }
+            previous = character;
+        }
+        console.log("Splitting at: " + splitIndex);
+        if (splitIndex > 30) {
+            description = description.slice(0, splitIndex);
+        }
+
+        if (description.length >= this.maxDescriptionLength) {
+            description = description.slice(0, this.maxDescriptionLength) + "...";
+        }
+        postText += description;
+        // add the link
+        postText += "\n\n" + link;
+
+        // shorten the post text if it's longer than maxPostLength
+        if (postText.length > this.maxPostLength) {
+            postText = postText.slice(0, this.maxPostLength - 3) + "...";
+        }
+        return postText;
+    }
+
+    findPostImage = (description) => {
         // get an image from the description 
         var imagePath = null;
         try {
@@ -51,43 +92,14 @@ class PostCreator {
         } catch (err) {
             console.error("Error getting the image path from an article: " + err);
         }
-
-        // add the description
-        var extractedText = this.extractText(description);
-        var sentences = extractedText.match(/\(?[^\.\?\!]+[\.!\?]\)?/g);
-        var descriptoinLength = 0;
-        var descriptionText = "";
-        var i = 0;
-        if (extractedText.length > this.maxDescriptionLength) {
-            while (descriptoinLength < this.maxDescriptionLength && i < sentences.length) {
-                var length = sentences[i].length;
-                if (descriptoinLength + length <= this.maxDescriptionLength) {
-                    descriptoinLength += length;
-                    descriptionText += sentences[i];
-                }
-                i++;
-            }
-            if (descriptionText.length == 0) {
-                descriptionText = extractedText.slice(0, this.maxDescriptionLength) + "...";
-            }
-        }
-        postText += "\n\n" + descriptionText;
-
-        // add the link
-        postText += "\n\n" + link;
-
-        // shorten the post text if it's longer than maxPostLength
-        if (postText.length > this.maxPostLength) {
-            postText = postText.slice(0, this.maxPostLength - 3) + "...";
-        }
-        return { postText: postText, imagePath: imagePath, game: game};
+        return imagePath;
     }
 
     /**
     * Extracts plain text from an HTML string
     * @param  {String} html an HTML string
     * @return {String} plain text
-    */ 
+    */
     extractText = (html) => {
         try {
             var $ = cheerio.load(html);
@@ -101,7 +113,7 @@ class PostCreator {
     * Returns the value of the "src" attribute of an <img> element
     * @param  {String} html an HTML string
     * @return {String} The "src" attribute
-    */ 
+    */
     extractSrc = (html) => {
         var $ = cheerio.load(html);
         return $("img").attr("src");

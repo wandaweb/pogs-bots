@@ -1,0 +1,12 @@
+[
+    {
+        "game": "SteamNews",
+        "access_token": "XQg9Bc4VtOdftvrLoxfmw9Z5Gs8ntwiqTn-T2T4Cs6w",
+        "api_url": "https://192.168.0.19/api/v1/"
+    },
+    {
+        "game": "Warframe",
+        "access_token": "_tUN7v3slGe2EEwMwdcXPlNJEcTrTcO9wkNaQKWA0pM",
+        "api_url": "https://192.168.0.19/api/v1/"
+    }
+]
