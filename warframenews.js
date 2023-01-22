@@ -45,7 +45,7 @@ async function getFeed(url, tag, local) {
             for (var i = 0; i < articleArray.length; i++) {
                 var article = articleArray[i];
                 var title = article.title;
-                var link = article.link;
+                var link = article.link[0];
                 var description = article.description[0];
                 var date = new Date(article.pubDate);
                 //var guid = article.guid[0]["_"];
