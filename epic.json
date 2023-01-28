@@ -1,0 +1,48 @@
+{
+    success: true,
+    data: {
+      type: 'dlc',
+      name: 'The Cycle: Frontier - Fortuna Survivor',
+      steam_appid: 2089570,
+      required_age: 0,
+      is_free: true,
+      detailed_description: `Only the toughest can claim to have survived Fortuna III's perilous surface, and now you can prove you made the cut with the Fortuna Survivor pack. A full outfit pack, a unique knife, and some Aurum to cover your needs. Gear up, adventure awaits!<br><br>Your Aurum balance and Cosmetic items are not affected by seasonal wipes.<br> <br><ul class="bb_ul"><li>Survivor Outfit Set<br></li><li>Survivor's Blade<br></li><li>250 Aurum</li></ul>`,
+      about_the_game: `Only the toughest can claim to have survived Fortuna III's perilous surface, and now you can prove you made the cut with the Fortuna Survivor pack. A full outfit pack, a unique knife, and some Aurum to cover your needs. Gear up, adventure awaits!<br><br>Your Aurum balance and Cosmetic items are not affected by seasonal wipes.<br> <br><ul class="bb_ul"><li>Survivor Outfit Set<br></li><li>Survivor's Blade<br></li><li>250 Aurum</li></ul>`,
+      short_description: "Only the toughest can claim to have survived Fortuna III's perilous surface, and now you can prove you made the cut with the Fortuna Survivor pack. A full outfit pack, a unique knife, and some Aurum to cover your needs. Gear up, adventure awaits!",
+      fullgame: { appid: '868270', name: 'The Cycle: Frontier' },
+      supported_languages: 'English<strong>*</strong>, German, French, Spanish - Spain, Polish, Russian, Simplified Chinese, Portuguese - Brazil, Italian, Japanese, Korean<br><strong>*</strong>languages with full audio support',
+      header_image: 'https://cdn.akamai.steamstatic.com/steam/apps/2089570/header.jpg?t=1672962531',
+      website: 'https://thecycle.game/',
+      pc_requirements: {
+        minimum: '<strong>Minimum:</strong><br><ul class="bb_ul"><li>Requires a 64-bit processor and operating system<br></li><li><strong>OS:</strong> Windows 10 64-bit<br></li><li><strong>Processor:</strong> Intel i5-4590 or AMD Ryzen 3 1200<br></li><li><strong>Memory:</strong> 6 GB RAM<br></li><li><strong>Graphics:</strong> NVIDIA GeForce GTX 760 or AMD Radeon R9 270<br></li><li><strong>DirectX:</strong> Version 11<br></li><li><strong>Network:</strong> Broadband Internet connection<br></li><li><strong>Additional Notes:</strong> 2GB VRAM</li></ul>',
+        recommended: '<strong>Recommended:</strong><br><ul class="bb_ul"><li>Requires a 64-bit processor and operating system<br></li><li><strong>OS:</strong> Windows 10 64-bit<br></li><li><strong>Processor:</strong> Intel i5-6600 or AMD Ryzen 5 1400<br></li><li><strong>Memory:</strong> 8 GB RAM<br></li><li><strong>Graphics:</strong> NVIDIA GeForce GTX 970 or AMD Radeon RX 570<br></li><li><strong>DirectX:</strong> Version 11<br></li><li><strong>Network:</strong> Broadband Internet connection<br></li><li><strong>Additional Notes:</strong> 4GB VRAM</li></ul>'
+      },
+      mac_requirements: {
+        minimum: '<strong>Minimum:</strong><br><ul class="bb_ul"><li>Requires a 64-bit processor and operating system</li></ul>',
+        recommended: '<strong>Recommended:</strong><br><ul class="bb_ul"><li>Requires a 64-bit processor and operating system</li></ul>'
+      },
+      linux_requirements: {
+        minimum: '<strong>Minimum:</strong><br><ul class="bb_ul"><li>Requires a 64-bit processor and operating system</li></ul>',
+        recommended: '<strong>Recommended:</strong><br><ul class="bb_ul"><li>Requires a 64-bit processor and operating system</li></ul>'
+      },
+      legal_notice: '©️ 2022 YAGER Development GmbH. All rights reserved.',
+      developers: [ 'YAGER' ],
+      publishers: [ 'YAGER' ],
+      packages: [ 815921, 746754 ],
+      package_groups: [ [Object] ],
+      platforms: { windows: true, mac: false, linux: false },
+      categories: [
+        [Object], [Object],
+        [Object], [Object],
+        [Object], [Object],
+        [Object]
+      ],
+      genres: [ [Object], [Object], [Object] ],
+      screenshots: [ [Object], [Object] ],
+      release_date: { coming_soon: false, date: '1 Aug, 2022' },
+      support_info: { url: 'https://thecycle.game/support-station/', email: '' },
+      background: 'https://cdn.akamai.steamstatic.com/steam/apps/2089570/page_bg_generated_v6b.jpg?t=1672962531',
+      background_raw: 'https://cdn.akamai.steamstatic.com/steam/apps/2089570/page_bg_generated.jpg?t=1672962531',
+      content_descriptors: { ids: [], notes: null }
+    }
+  }
