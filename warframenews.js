@@ -111,7 +111,7 @@ function createPost(title, link, description, tag) {
     description = description.trim();
 
     var text = postText + postCreator.createPostText(link, description)
-        .replaceAll(/(\r\n|\r|\n){2,}/g, '$1\n');
+        .replaceAll('/(\r\n|\r|\n){2,}/g', '$1\n').replaceAll('\t','');
     text = decode(text);
 
     return text;

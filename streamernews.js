@@ -112,8 +112,8 @@ function createPost(title, link, description, content) {
 }
 
 function isRecent(date) {
-    const sixMonthsAgo = moment().subtract(6, 'months');
-    return moment(date).isAfter(sixMonthsAgo);
+    const minDate = moment().subtract(2, 'months');
+    return moment(date).isAfter(minDate);
 }
 
 async function createPublisher() {

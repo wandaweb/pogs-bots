@@ -54,18 +54,22 @@ class PostCreator {
 
         var previous = description[0];
         var splitIndex = 0;
+        var splitWordIndex = 0;
         for (var i = 1; i<description.length && i<this.maxDescriptionLength; i++) {
             var character = description[i];
             if (character == ' ' || character == '\n' || character == '\r') {
                 if (previous == '.' || previous == '?' || previous == '!') {
                         splitIndex = i;
                 }
+                splitWordIndex = i;
             }
             previous = character;
         }
         console.log("Splitting at: " + splitIndex);
         if (splitIndex > 30) {
             description = description.slice(0, splitIndex);
+        } else if (splitWordIndex > 20) {
+            description = description.slice(0, splitWordIndex);
         }
 
         if (description.length >= this.maxDescriptionLength) {
