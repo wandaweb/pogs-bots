@@ -40,7 +40,7 @@ class PostCreator {
         postText += "\n";
 
         // add a hashtag
-        postText += "#SteamNews";
+        postText += "#SteamNews\n\n";
 
         postText += this.createPostText(link, description);
         imagePath = this.findPostImage(description);

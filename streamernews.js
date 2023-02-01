@@ -22,7 +22,7 @@ createPublisher().then((bot) => {
     console.log(bot);
     getFeed()
     setInterval(getFeed, 10 * 60 * 1000);
-    setInterval(local.cleanUpPostList, 48 * 60 * 60 * 1000, 200);
+    //setInterval(local.cleanUpPostList, 60 * 24 * 60 * 60 * 1000, 200);
 });
 
 async function getFeed() {
@@ -117,7 +117,7 @@ function isRecent(date) {
 }
 
 async function createPublisher() {
-    var data = fs.readFileSync("StreamerNewsConfig.json");
+    var data = fs.readFileSync("streamernewsconfig.json");
     try {
         var account = JSON.parse(data);
         gameLogin = await PostPublisher.createMastodonBot(account);

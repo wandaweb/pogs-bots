@@ -28,9 +28,9 @@ createPublisher().then(async (bot) => {
     setInterval(getFeed, 10 * 60 * 1000, 'https://forums.warframe.com/forum/170-announcements-events.xml/', '#WarframeAnnouncements', localAnnouncements);
     setInterval(getFeed, 10 * 60 * 1000, 'https://forums.warframe.com/forum/123-developer-workshop-update-notes.xml/', '#WarrfameDevWorkshop', localWorkshop);
     setInterval(getFeed, 10 * 60 * 1000, 'https://forums.warframe.com/forum/170-announcements-events.xml/', '#WarframeStreamsAndContests', localLivestreams);
-    setInterval(localAnnouncements.cleanUpPostList, 48 * 60 * 60 * 1000, 90);
-    setInterval(localWorkshop.cleanUpPostList, 48 * 60 * 60 * 1000, 90);
-    setInterval(localLivestreams.cleanUpPostList, 48 * 60 * 60 * 1000, 90);
+    //setInterval(localAnnouncements.cleanUpPostList,60 * 24 * 60 * 60 * 1000, 90);
+    //setInterval(localWorkshop.cleanUpPostList, 60 * 24 * 60 * 60 * 1000, 90);
+    //setInterval(localLivestreams.cleanUpPostList, 60 * 24 * 60 * 60 * 1000, 90);
 });
 
 async function getFeed(url, tag, local) {
