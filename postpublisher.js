@@ -51,7 +51,7 @@ class PostPublisher {
         try {
             var response = await this.M.v2.mediaAttachments.create({
                 file: fs.readFileSync(path),
-                description: 'coffee',
+                description: '',
             });
             console.log("Image id is " + response.id);
             fs.unlink(path, (err) => {

@@ -1,0 +1,41 @@
+const axios = require('axios');
+const { XMLParser } = require('fast-xml-parser');
+const fs = require('fs');
+const moment = require('moment');
+const LocalData = require('./localdata.js');
+const PostCreator = require('./postcreator.js');
+const PostPublisher = require('./postpublisher.js');
+const RpsSource = require('./bots/hardwareSources/rpsSource.js');
+const TomSource = require('./bots/hardwareSources/tomSource.js');
+
+var rps;
+
+createPublisher().then((bot) => {
+    console.log("Bot: ")
+    console.log(bot);
+
+    // RPS
+    rps = new RpsSource(bot);
+    rps.getFeed();
+    setInterval(rps.getFeed, 2 * 60 * 60 * 1000);
+    //setInterval(rps.cleanUpPostList, 60 * 24 * 60 * 60 * 1000, 200);
+
+    // Tom
+    tom = new TomSource(bot);
+    tom.getFeed();
+    setInterval(tom.getFeed, 2 * 60 * 60 * 1000);
+
+});
+
+
+async function createPublisher() {
+    var data = fs.readFileSync("bots/hardwareSources/hardwareconfig.json");
+    try {
+        var account = JSON.parse(data);
+        console.log(account);
+        gameLogin = await PostPublisher.createMastodonBot(account);
+        return new PostPublisher.PostPublisher(gameLogin);
+    } catch (err) {
+        console.log("Error creating a specific mastodon bot. " + err);
+    }
+}

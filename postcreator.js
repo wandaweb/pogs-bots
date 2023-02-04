@@ -2,6 +2,7 @@ const axios = require('axios');
 const cheerio = require("cheerio");
 const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
 
 class PostCreator {
 
@@ -27,10 +28,13 @@ class PostCreator {
     createPostSteam = async (title, link, description) => {
         var postText = "";
         var game, imagePath;
+        var isVr = false;
 
         // add the game name 
         if (link.includes("/app/")) {
-            game = await this.findGameName(link);
+            var gameInfo = await this.findGameInfo(link);
+            game = gameInfo.gameName;
+            isVr = gameInfo.supportsVR;
             postText += game;
             postText += ": ";
         }
@@ -40,12 +44,14 @@ class PostCreator {
         postText += "\n";
 
         // add a hashtag
-        postText += "#SteamNews\n\n";
+        postText += "#SteamUpdates ";
+        if (isVr) postText += "#VRGaming";
+        postText += "\n\n";
 
         postText += this.createPostText(link, description);
         imagePath = this.findPostImage(description);
 
-        return { postText: postText, imagePath: imagePath, game: game };
+        return { postText: postText, imagePath: imagePath, game: game, isVr: isVr };
     }
 
     createPostText = (link, description) => {
@@ -123,17 +129,22 @@ class PostCreator {
         return $("img").attr("src");
     }
 
-    findGameName = async (link) => {
+    findGameInfo = async (link) => {
         try {
             var gameId = link.split("/app/")[1].split("/view/")[0];
             var steamAppLink = "https://store.steampowered.com/api/appdetails?appids=" + gameId;
             var response = await axios.get(steamAppLink);
             var gameInfo = response.data[gameId];
             var gameName = gameInfo.data.name;
-            return gameName;
+            var categories = gameInfo.data.categories;
+            var isVr = false;
+            for (var i = 0; i< categories.length; i++) {
+                if(categories[i].description.startsWith("VR")) isVr = true;
+            }
+            return {gameName: gameName, supportsVR: isVr};
         } catch (err) {
             console.error("Error getting the game's name: " + err);
-            return "";
+            return {gameName: null, supportsVR: false};
         }
     }
 
@@ -144,7 +155,20 @@ class PostCreator {
         try {
             var buffer = await this.downloadImage(path);
             await sharp(buffer).jpeg({ quality: 60 }).toFile(localName);
-            return localName;
+            var stats = fs.statSync(localName);
+            var fileSizeInBytes = stats.size;
+            console.log("file size: " + fileSizeInBytes);
+            if (fileSizeInBytes > 20000) {
+                console.log("big enough")
+                return localName;
+            } else {
+                console.log("too small")
+                // delete file
+                fs.unlink(localName, (err) => {
+                    if (err) console.error("Error deleting file: " + err)
+                });
+                return null;
+            }
         } catch (err) {
             console.error("Error downloading image: " + err);
         }
