@@ -44,7 +44,8 @@ class PostCreator {
         postText += "\n";
 
         // add a hashtag
-        postText += "#SteamUpdates ";
+        //postText += "#SteamUpdates ";
+        if (game) postText += "#"+game.replace(/\s/g, '')+" ";
         if (isVr) postText += "#VRGaming";
         postText += "\n\n";
 
@@ -89,7 +90,7 @@ class PostCreator {
         if (postText.length > this.maxPostLength) {
             postText = postText.slice(0, this.maxPostLength - 3) + "...";
         }
-        return postText;
+        return postText.trim();
     }
 
     findPostImage = (description) => {

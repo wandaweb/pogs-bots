@@ -24,11 +24,11 @@ class SteamSource extends NewsSource {
         var webData = [];
         try {
             webData = await steamSelenium.getGames();
-            var postText = "";
+            
             var date = new Date();
             for (var i = 0; i < webData.length; i++) {
                 var gameData = webData[i];
-
+                var postText = "";
                 if (!await localSteam.guidExists(gameData.id)) {
                     localSteam.addPost(gameData.id, date);
 
@@ -41,6 +41,8 @@ class SteamSource extends NewsSource {
                     try {
                         var response = await axios.get(apiUrl);
 
+                        var visibility = 'public';
+
                         if (response && response.data) {5
                             var feed = response.data;
                             var game = Object.values(feed)[0];
@@ -49,6 +51,10 @@ class SteamSource extends NewsSource {
                                 postText += "This is a DLC for ";
                                 postText += game.data.fullgame.name;
                                 postText += "\n";
+                            }
+
+                            if (type != "game") {
+                                visibility = 'private';
                             }
 
                             var description = game.data.short_description;
@@ -64,7 +70,7 @@ class SteamSource extends NewsSource {
                                 if (imageName) {
                                     var imageId = await this.postPublisher.uploadImage(imageName);
                                     //console.log("posting image: " + imageId);
-                                    var response = await this.postPublisher.postToMastodon(postText, imageId);
+                                    var response = await this.postPublisher.postToMastodon(postText, imageId, visibility);
                                     if (response && response.id) {
                                         posted = true;
                                         console.log("Posted with image");
@@ -73,7 +79,7 @@ class SteamSource extends NewsSource {
                             }
 
                             if (!posted) {
-                                var response = await this.postPublisher.postToMastodon(postText);
+                                var response = await this.postPublisher.postToMastodon(postText, null, visibility);
                                 console.log("posted without an image")
                             }
                             await this.delay(1000);

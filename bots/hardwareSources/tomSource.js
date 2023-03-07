@@ -51,7 +51,7 @@ class TomSource extends NewsSource {
                         console.log(postText);
 
 
-                        var response = await this.postPublisher.postToMastodon(postText);
+                        var response = await this.postPublisher.postToMastodon(postText, null, 'unlisted');
                         console.log("posted without an image")
 
                         await this.delay(1000);
@@ -66,7 +66,8 @@ class TomSource extends NewsSource {
 
     createPost = function createPost(title, link, description) {
         // add the title
-        var postText = title;
+        var postText = "Tom's Hardware writes:\n";
+        postText += title;
         postText += "\n";
 
         // add a hashtag

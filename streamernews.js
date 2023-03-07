@@ -72,7 +72,7 @@ async function getFeed() {
                         if (imageName) {
                             var imageId = await postPublisher.uploadImage(imageName);
                             console.log("posting image: " + imageId);
-                            var response = await postPublisher.postToMastodon(postText, imageId);
+                            var response = await postPublisher.postToMastodon(postText, imageId, 'unlisted');
                             if (response && response.id) {
                                 posted = true;
                                 console.log("Posted with image");
@@ -81,7 +81,7 @@ async function getFeed() {
                     }
                     
                     if (!posted) {
-                        var response = await postPublisher.postToMastodon(postText);
+                        var response = await postPublisher.postToMastodon(postText, null, 'unlisted');
                         console.log("posted without an image")
                     }
                     await delay(1000);

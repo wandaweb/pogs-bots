@@ -9,6 +9,7 @@ const RpsSource = require('./bots/hardwareSources/rpsSource.js');
 const TomSource = require('./bots/hardwareSources/tomSource.js');
 
 var rps;
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 createPublisher().then((bot) => {
     console.log("Bot: ")

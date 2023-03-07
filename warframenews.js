@@ -20,18 +20,17 @@ var postPublisher;
 
 createPublisher().then(async (bot) => {
     postPublisher = bot;
-    console.log("Bot: ")
+    console.log("Bot: ");
     console.log(bot);
-    getFeed('https://forums.warframe.com/forum/170-announcements-events.xml/', '#WarframeAnnouncements', localAnnouncements);
-    getFeed('https://forums.warframe.com/forum/123-developer-workshop-update-notes.xml/', '#WarrfameDevWorkshop', localWorkshop);
-    getFeed('https://forums.warframe.com/forum/113-livestreams-contests.xml/', '#WarframeStreamsAndContests', localLivestreams);
-    setInterval(getFeed, 10 * 60 * 1000, 'https://forums.warframe.com/forum/170-announcements-events.xml/', '#WarframeAnnouncements', localAnnouncements);
-    setInterval(getFeed, 10 * 60 * 1000, 'https://forums.warframe.com/forum/123-developer-workshop-update-notes.xml/', '#WarrfameDevWorkshop', localWorkshop);
-    setInterval(getFeed, 10 * 60 * 1000, 'https://forums.warframe.com/forum/170-announcements-events.xml/', '#WarframeStreamsAndContests', localLivestreams);
-    //setInterval(localAnnouncements.cleanUpPostList,60 * 24 * 60 * 60 * 1000, 90);
-    //setInterval(localWorkshop.cleanUpPostList, 60 * 24 * 60 * 60 * 1000, 90);
-    //setInterval(localLivestreams.cleanUpPostList, 60 * 24 * 60 * 60 * 1000, 90);
+    startBots();
+
 });
+
+function startBots() {
+    getFeed('https://forums.warframe.com/forum/170-announcements-events.xml/', '#Warframe', localAnnouncements);
+    //getFeed('https://forums.warframe.com/forum/123-developer-workshop-update-notes.xml/', '#Warrfame', localAnnouncements);
+    getFeed('https://forums.warframe.com/forum/113-livestreams-contests.xml/', '#Warframe', localAnnouncements);
+}
 
 async function getFeed(url, tag, local) {
     try {
@@ -79,7 +78,7 @@ async function getFeed(url, tag, local) {
                         if (imageName) {
                             var imageId = await postPublisher.uploadImage(imageName);
                             //console.log("posting image: " + imageId);
-                            var response = await postPublisher.postToMastodon(postText, imageId);
+                            var response = await postPublisher.postToMastodon(postText, imageId, 'unlisted');
                             if (response && response.id) {
                                 posted = true;
                                 console.log("Posted with image");
@@ -88,7 +87,7 @@ async function getFeed(url, tag, local) {
                     }
 
                     if (!posted) {
-                        var response = await postPublisher.postToMastodon(postText);
+                        var response = await postPublisher.postToMastodon(postText, null, 'unlisted');
                         console.log("posted without an image")
                     }
                     await delay(1000);

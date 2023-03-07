@@ -9,6 +9,7 @@ const createMastodonBot = async function(account) {
             url: account.api_url,
             accessToken: account.access_token
         });
+        
     } catch (err) {
         console.log("Error creating a specific bot. " + err);
     }
@@ -20,12 +21,12 @@ class PostPublisher {
         this.M = masto;
     }
 
-    postToMastodon = async (post, image = null) => {
+    postToMastodon = async (post, image = null, visible = 'public' ) => {
         if (image) {
             try {
                 return await this.M.v1.statuses.create({
                     status: post,
-                    visibility: 'public',
+                    visibility: visible,
                     mediaIds: [image],
                 });
             } catch (err) {
@@ -35,7 +36,7 @@ class PostPublisher {
             try {
                 return await this.M.v1.statuses.create({
                     status: post,
-                    visibility: 'public'
+                    visibility: visible
                 });
             } catch (err) {
                 console.error("Error tooting plain text: " + err);

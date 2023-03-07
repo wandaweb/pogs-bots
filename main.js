@@ -19,12 +19,12 @@ var postPublisher;
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 createPublishers().then(() => {
-    postPublisher = getGameBot("SteamNews").bot;
+    
     console.log("Steam News publisher: ")
     console.log(postPublisher);
     getFeed()
-    setInterval(getFeed, 10 * 60 * 1000);
-    setInterval(local.cleanUpPostList, 48 * 60 * 60 * 1000);
+    //setInterval(getFeed, 10 * 60 * 1000);
+    //setInterval(local.cleanUpPostList, 48 * 60 * 60 * 1000);
 });
 
 async function getFeed() {
@@ -66,18 +66,18 @@ async function getFeed() {
                     if (post.game && botExists(post.game) || titleStartsWithGame(title)) {
                         console.log("Will create a post for the game: " + post.game);
                         var publisher;
-                        if (post.game) { publisher = getGameBot(post.game).bot; }
-                        else { publisher = getBotFromTitle(title); }
+                        if (post.game) { publisher = await getGameBot(post.game); }
+                        else { publisher = await getBotFromTitle(title); }
                         let posted = false;
                         if (post.imagePath) {
                             console.log("uploading image: " + post.imagePath);
                             var localPath = await postCreator.createImage(post.imagePath);
-                            console.log("Image is null: "+localPath == null);
+                            console.log("Image is null: " + localPath == null);
                             // upload the image
                             if (localPath != null) {
                                 var imageId = await publisher.uploadImage(localPath);
                                 console.log("posting image: " + imageId);
-                                var response = await publisher.postToMastodon(post.postText, imageId);
+                                var response = await publisher.postToMastodon(post.postText, imageId, 'unlisted');
                                 if (response && response.id) {
                                     posted = true;
                                     console.log("Posted with image");
@@ -85,33 +85,15 @@ async function getFeed() {
                             }
                         }
                         if (!posted) {
-                            var response = await publisher.postToMastodon(post.postText);
+                            var response = await publisher.postToMastodon(post.postText, null, 'unlisted');
                             console.log("posted without an image")
                         }
-                    } else if (post.isVr) {
-                        var postPublisherVR = getGameBot("vrgaming").bot;
-                        // if the post has an image, download it
-                        let posted = false;
-                        if (post.imagePath) {
-                            console.log("uploading image: " + post.imagePath);
-                            var localPath = await postCreator.createImage(post.imagePath);
-                            // upload the image
-                            if (localPath) {
-                                var imageId = await postPublisherVR.uploadImage(localPath);
-                                console.log("posting image: " + imageId);
-                                var response = await postPublisherVR.postToMastodon(post.postText, imageId);
-                                if (response && response.id) {
-                                    posted = true;
-                                    console.log("Posted with image");
-                                }
-                            }
-                        }
-                        if (!posted) {
-                            var response = await postPublisherVR.postToMastodon(post.postText);
-                            console.log("posted without an image")
-                        }
-
-                    } else {
+                        publisher = null;
+                    } 
+                    // in any case
+                    {
+                        postPublisher = await getGameBot("SteamNews");
+                        console.log("post publisher: " + postPublisher);
                         // if the post has an image, download it
                         var posted = false;
                         if (post.imagePath) {
@@ -121,7 +103,7 @@ async function getFeed() {
                             if (localPath) {
                                 var imageId = await postPublisher.uploadImage(localPath);
                                 console.log("posting image: " + imageId);
-                                var response = await postPublisher.postToMastodon(post.postText, imageId);
+                                var response = await postPublisher.postToMastodon(post.postText, imageId, 'unlisted');
                                 if (response && response.id) {
                                     posted = true;
                                     console.log("Posted with image");
@@ -129,9 +111,34 @@ async function getFeed() {
                             }
                         }
                         if (!posted) {
-                            var response = await postPublisher.postToMastodon(post.postText);
+                            var response = await postPublisher.postToMastodon(post.postText, null, 'unlisted');
                             console.log("posted without an image")
                         }
+                        postPublisher = null;
+                    }
+                    if (post.isVr) {
+                        var postPublisherVR = await getGameBot("vrgaming");
+                        // if the post has an image, download it
+                        let posted = false;
+                        if (post.imagePath) {
+                            console.log("uploading image: " + post.imagePath);
+                            var localPath = await postCreator.createImage(post.imagePath);
+                            // upload the image
+                            if (localPath) {
+                                var imageId = await postPublisherVR.uploadImage(localPath);
+                                console.log("posting image: " + imageId);
+                                var response = await postPublisherVR.postToMastodon(post.postText, imageId, 'unlisted');
+                                if (response && response.id) {
+                                    posted = true;
+                                    console.log("Posted with image");
+                                }
+                            }
+                        }
+                        if (!posted) {
+                            var response = await postPublisherVR.postToMastodon(post.postText, null, 'unlisted');
+                            console.log("posted without an image")
+                        }
+                        postPublisherVR = null;
                     }
 
                 } else {
@@ -152,21 +159,37 @@ async function createPublishers() {
     try {
         for (var i = 0; i < accounts.length; i++) {
             var account = accounts[i];
-            gameLogin = await PostPublisher.createMastodonBot(account);
-            var gameBot = new PostPublisher.PostPublisher(gameLogin);
-            gameBots.push({ game: account.game, bot: gameBot });
+            //gameLogin = await PostPublisher.createMastodonBot(account);
+            //var gameBot = new PostPublisher.PostPublisher(gameLogin);
+            var gameBot = null;
+            gameBots.push({ game: account.game, bot: gameBot, account: account });
         }
     } catch (err) {
         console.log("Error creating a specific mastodon bot. " + err);
     }
 }
 
-function getGameBot(game) {
+async function getGameBot(game) {
     var returnElement = null;
     console.log("Game bot count: " + gameBots.length);
-    gameBots.forEach((element) => {
-        if (element.game == game) returnElement = element;
-    });
+    /*gameBots.forEach((element) => {
+        if (element.game == game)  {
+        returnElement = element;
+        }
+    });*/
+    for (var i = 0; i < gameBots.length; i++) {
+        var element = gameBots[i];
+        if (element.game == game) {
+            console.log("found game bot " + game);
+            var account = element.account;
+            console.log("account: "+JSON.stringify(account));
+            var gameLogin = await PostPublisher.createMastodonBot(account);
+            console.log("login: "+gameLogin);
+            var gameBot = new PostPublisher.PostPublisher(gameLogin);
+            console.log("bot: "+gameBot);
+            returnElement = gameBot;
+        }
+    }
     return returnElement;
 }
 
@@ -185,20 +208,20 @@ function botExists(game) {
 }
 
 function titleStartsWithGame(title) {
-    for (var i=0; i<gameBots.length; i++) {
+    for (var i = 0; i < gameBots.length; i++) {
         var gameTitle = gameBots[i].game;
-        if(title.startsWith(gameTitle)) {
+        if (title.startsWith(gameTitle)) {
             return true;
         }
     }
     return false;
 }
 
-function getBotFromTitle(title) {
-    for (var i=0; i<gameBots.length; i++) {
+async function getBotFromTitle(title) {
+    for (var i = 0; i < gameBots.length; i++) {
         var gameTitle = gameBots[i].game;
-        if(title.startsWith(gameTitle)) {
-            return gameBots[i].bot;
+        if (title.startsWith(gameTitle)) {
+            return await getGameBot(gameTitle);
         }
     }
 }

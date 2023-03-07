@@ -37,7 +37,7 @@ class EpicSource extends NewsSource {
                     var gameName = gameNameArray[0];
                     var gameDate = gameNameArray[1].split(",")[0];
                     var postText = gameName + "\n#FreeGames #EpicGames\n\n";
-                    postText += gameDate + "\n";
+                    postText += gameDate + " EET (GMT+2)\n";
                     var link = game.url;
 
                     // get description

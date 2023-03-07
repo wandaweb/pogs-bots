@@ -66,7 +66,7 @@ class RpsSource extends NewsSource {
                                 if (imageName) {
                                     var imageId = await this.postPublisher.uploadImage(imageName);
                                     console.log("posting image: " + imageId);
-                                    var response = await this.postPublisher.postToMastodon(postText, imageId);
+                                    var response = await this.postPublisher.postToMastodon(postText, imageId, 'unlisted');
                                     if (response && response.id) {
                                         posted = true;
                                         console.log("Posted with image");
@@ -75,7 +75,7 @@ class RpsSource extends NewsSource {
                             }
 
                             if (!posted) {
-                                var response = await this.postPublisher.postToMastodon(postText);
+                                var response = await this.postPublisher.postToMastodon(postText, null, 'unlisted');
                                 console.log("posted without an image")
                             }
                             await this.delay(1000);
@@ -90,7 +90,8 @@ class RpsSource extends NewsSource {
 
     createPost = function createPost(title, link, description) {
         // add the title
-        var postText = title;
+        var postText = "Rock, Paper, Shotgun writes:\n"
+        postText += title;
         postText += "\n";
 
         // add a hashtag
