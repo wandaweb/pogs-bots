@@ -17,7 +17,7 @@
     "masto": "^5.4.0",
     "moment": "^2.29.4",
     "puppeteer": "^19.5.2",
-    "selenium-webdriver": "^4.8.0",
+    "selenium-webdriver": "^4.8.2",
     "sharp": "^0.31.3",
     "uuid": "^9.0.0",
     "xml2js": "^0.4.23"

@@ -19,7 +19,7 @@ var postPublisher;
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 createPublishers().then(() => {
-    
+
     console.log("Steam News publisher: ")
     console.log(postPublisher);
     getFeed()
@@ -89,7 +89,29 @@ async function getFeed() {
                             console.log("posted without an image")
                         }
                         publisher = null;
-                    } 
+                    } else if (post.title.includes("Diablo 4") || post.title.includes("Diablo IV")) {
+                        publisher = await getGameBot("Diablo 4");
+                        if (post.imagePath) {
+                            console.log("uploading image: " + post.imagePath);
+                            var localPath = await postCreator.createImage(post.imagePath);
+                            console.log("Image is null: " + localPath == null);
+                            // upload the image
+                            if (localPath != null) {
+                                var imageId = await publisher.uploadImage(localPath);
+                                console.log("posting image: " + imageId);
+                                var response = await publisher.postToMastodon(post.postText, imageId, 'unlisted');
+                                if (response && response.id) {
+                                    posted = true;
+                                    console.log("Posted with image");
+                                }
+                            }
+                        }
+                        if (!posted) {
+                            var response = await publisher.postToMastodon(post.postText, null, 'unlisted');
+                            console.log("posted without an image")
+                        }
+                        publisher = null;
+                    }
                     // in any case
                     {
                         postPublisher = await getGameBot("SteamNews");
@@ -115,6 +137,11 @@ async function getFeed() {
                             console.log("posted without an image")
                         }
                         postPublisher = null;
+
+                        // if post title contains "free", DM myself
+                        if (post.title.includes("free")) {
+                            var response = await postPublisher.postToMastodon("@wandaweb " + post.title, null, 'direct');
+                        }
                     }
                     if (post.isVr) {
                         var postPublisherVR = await getGameBot("vrgaming");
@@ -140,6 +167,8 @@ async function getFeed() {
                         }
                         postPublisherVR = null;
                     }
+
+
 
                 } else {
                     console.log("already posted");
@@ -182,11 +211,11 @@ async function getGameBot(game) {
         if (element.game == game) {
             console.log("found game bot " + game);
             var account = element.account;
-            console.log("account: "+JSON.stringify(account));
+            console.log("account: " + JSON.stringify(account));
             var gameLogin = await PostPublisher.createMastodonBot(account);
-            console.log("login: "+gameLogin);
+            console.log("login: " + gameLogin);
             var gameBot = new PostPublisher.PostPublisher(gameLogin);
-            console.log("bot: "+gameBot);
+            console.log("bot: " + gameBot);
             returnElement = gameBot;
         }
     }

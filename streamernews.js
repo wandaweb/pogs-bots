@@ -21,8 +21,7 @@ createPublisher().then((bot) => {
     console.log("Bot: ")
     console.log(bot);
     getFeed()
-    setInterval(getFeed, 10 * 60 * 1000);
-    //setInterval(local.cleanUpPostList, 60 * 24 * 60 * 60 * 1000, 200);
+
 });
 
 async function getFeed() {

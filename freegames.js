@@ -21,14 +21,14 @@ createPublisher().then((bot) => {
     // Epic
     epic = new EpicSource(bot);
     epic.getEpicGames();
-    setInterval(epic.getEpicGames, 2 * 60 * 60 * 1000);
-    //setInterval(epic.cleanUpPostList, 60 * 24 * 60 * 60 * 1000, 200);
+
 
     // Steam
     steam = new SteamSource(bot);
     steam.getSteamGames();
-    setInterval(steam.getSteamGames, 2 * 60 * 60 * 1000);
-    //setInterval(steam.cleanUpPostList, 60 * 24 * 60 * 60 * 1000, 200);
+
+    // SteamWeekend
+
 
     // Ubisoft
 

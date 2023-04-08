@@ -18,13 +18,11 @@ createPublisher().then((bot) => {
     // RPS
     rps = new RpsSource(bot);
     rps.getFeed();
-    setInterval(rps.getFeed, 2 * 60 * 60 * 1000);
-    //setInterval(rps.cleanUpPostList, 60 * 24 * 60 * 60 * 1000, 200);
 
     // Tom
     tom = new TomSource(bot);
     tom.getFeed();
-    setInterval(tom.getFeed, 2 * 60 * 60 * 1000);
+
 
 });
 

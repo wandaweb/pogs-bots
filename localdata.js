@@ -9,6 +9,7 @@ class LocalData {
 
     guidExists = async (guid) => {
         var content = await this.readPostsFile();
+        if (content == null) return true;
         for (var i = 0; i < content.length; i++) {
             var existingPost = content[i];
             if (existingPost.guid && guid == existingPost.guid) {
