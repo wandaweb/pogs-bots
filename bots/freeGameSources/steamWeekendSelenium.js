@@ -3,7 +3,7 @@ const firefox = require('selenium-webdriver/firefox');
 
 const screen = {
     width: 640,
-    height: 480
+    height: 780
 };
 
 // run once a day
@@ -15,18 +15,18 @@ class SteamWeekendSelenium {
         
         try {
             var options = new firefox.Options();
-            options.addArguments("--headless");
+            //options.addArguments("--headless");
             options.addArguments("--disable-gpu");
             options.addArguments("--no-sandbox");
             options.windowSize(screen);
-            options.addArguments('--disable-blink-features=AutomationControlled')
+            //options.addArguments('--disable-blink-features=AutomationControlled')
             options.setPreference('permissions.default.image', 2);
 
             var driver = await new Builder()
                 .forBrowser(Browser.FIREFOX)
                 .setFirefoxOptions(options)
                 .build();
-            driver.executeScript("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
+            //driver.executeScript("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
             var gogBaseUrl = "https://store.steampowered.com/search/specials=1?category1=998&specials=1&ndl=1";
             await driver.get(gogBaseUrl);
             var body = await driver.findElement(By.css('body'));
@@ -119,5 +119,5 @@ module.exports = SteamWeekendSelenium;
 
 
 
-var client = new SteamWeekendSelenium();
-client.getGames();
+//var client = new SteamWeekendSelenium();
+//client.getGames();
